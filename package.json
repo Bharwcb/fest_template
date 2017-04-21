@@ -1,0 +1,19 @@
+{
+  "name": "fest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bharwcb/fest.git"
+  },
+  "author": "Brad Harris",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bharwcb/fest/issues"
+  },
+  "homepage": "https://github.com/Bharwcb/fest#readme",
+  "dependencies": {
+    "dotenv": "^4.0.0"
+  }
+}
