@@ -30,6 +30,7 @@
 	</div>
 
 	<script id="loggedin-template" type="text/x-handlebars-template">
+	<!-- does this have to be id=user-profile-template? -->
 		<h1>Logged in as {{display_name}}</h1>
 		<img id="avatar" width="200" src="{{images.0.url}}" />
 			<dl class="dl-horizontal">
@@ -42,5 +43,8 @@
 			</dl>
 			<p><a href="/">Log in again</a></p>
 	</script>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+	
 </body>
 </html>
