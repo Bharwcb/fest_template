@@ -35,7 +35,7 @@ app
 
 	console.log('Authorizing with Spotify, redirecting to https://accounts.spotify.com/authorize?...');
 	res.redirect('https://accounts.spotify.com/authorize?' + querystring.stringify({
-			response_type = 'code',
+			response_type: 'code',
 			client_id: process.env.CLIENT_ID,
 			scope: scope,
 			redirect_uri: redirect_uri,
