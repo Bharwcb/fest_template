@@ -16,7 +16,7 @@ var generateRandomString = function(length) {
 	return text;
 };
 
-var redirect_uri = 'http://localhost:8888/callback';
+var redirect_uri = 'http://localhost:8888/callback/';
 var stateKey = 'spotify_auth_state';
 
 app
@@ -35,23 +35,22 @@ app
 
 	console.log('Authorizing with Spotify, redirecting to https://accounts.spotify.com/authorize?...');
 
+	console.log("redirect_uri: ", redirect_uri);
+
 	res.redirect('https://accounts.spotify.com/authorize?' + querystring.stringify({
 			response_type: 'code',
 			client_id: process.env.CLIENT_ID,
 			scope: scope,
 			redirect_uri: redirect_uri,
-			state: state
+			state: state,
+			// require login every time for testing
+			show_dialog: true
 		}));
 });
 
-// spotify returns with code, now request access token after checking state parameter
+// redirect URI: /callback?authorization_code=12345... 
+// now, request access token after checking state parameter
 app.get('/callback', function(req, res) {
-
-	/* 
-	WHATS HAPPENING HERE?
-
-	Isn't code and state returned in the response from first call, not request? Or is this building the next request?
-	*/
 	var code = req.query.code || null;
 	var state = req.query.state || null;
 	var storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -61,7 +60,6 @@ app.get('/callback', function(req, res) {
 			error: 'state_mismatch'
 		}));
 	} else {
-
 		res.clearCookie(stateKey);
 		var authOptions = {
 			url: 'https://accounts.spotify.com/api/token',
@@ -69,7 +67,7 @@ app.get('/callback', function(req, res) {
 			form: {
 				code: code,
 				redirect_uri: redirect_uri,
-				grant_type: 'authorization_code'
+				grant_type: 'authorization_code',
 			},
 			headers: {
 				'Authorization': 'Basic ' + (new Buffer(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET).toString('base64'))
@@ -77,18 +75,22 @@ app.get('/callback', function(req, res) {
 			json: true
 		};
 
-		request.post(authOptions, function(err, response, body) {
+		request.post(authOptions, function(error, response, body) {
 			console.log("Requesting access token...");
+
+			// console.log("RESPONSE STATUS CODE: ", response.statusCode);
+			// console.log("BODY: ", body);
+			// console.log("RESPONSE: ", response);
 
 			if (!error && response.statusCode === 200) {
 
-				console("Access token granted");
+				console.log("Access token granted");
 				var access_token = body.access_token;
 				var refresh_token = body.refresh_token;
 
 				var options = {
 					url: 'https://api.spotify.com/v1/me',
-					headers: { 'Authorization': 'Bearar ' + access_token },
+					headers: { 'Authorization': 'Bearer ' + access_token },
 					json: true
 				};
 
@@ -97,11 +99,18 @@ app.get('/callback', function(req, res) {
 					console.log("body: ", body);
 				});
 
+				// redirect to homepage
+				res.redirect('/#' + querystring.stringify({
+					access_token: access_token,
+					refresh_token: refresh_token
+				}));
+
 			} else {
 				res.redirect('/#' + querystring.stringify({
 					error: 'invalid_token'
 				}));
 			}
+
 		});
 	}
 });
