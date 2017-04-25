@@ -33,19 +33,19 @@ app
 	// authorization / request spotify 'code'
 	var scope = 'user-read-private user-read-email user-follow-read user-library-read user-top-read';
 
-	console.log('Authorizing with Spotify, redirecting to https://accounts.spotify.com/authorize?...');
+	var request_auth_code_query = querystring.stringify({
+		response_type: 'code',
+		client_id: process.env.CLIENT_ID,
+		scope: scope,
+		redirect_uri: redirect_uri,
+		state: state,
+		// require login every time for testing
+		show_dialog: true
+	});
 
-	console.log("redirect_uri: ", redirect_uri);
+	console.log("\n\nREQUESTING SPOTIFY AUTHORIZATION CODE FROM: https://accounts.spotify.com/authorize?", request_auth_code_query);
 
-	res.redirect('https://accounts.spotify.com/authorize?' + querystring.stringify({
-			response_type: 'code',
-			client_id: process.env.CLIENT_ID,
-			scope: scope,
-			redirect_uri: redirect_uri,
-			state: state,
-			// require login every time for testing
-			show_dialog: true
-		}));
+	res.redirect('https://accounts.spotify.com/authorize?' + request_auth_code_query);
 });
 
 // redirect URI: /callback?authorization_code=12345... 
@@ -63,7 +63,6 @@ app.get('/callback', function(req, res) {
 		res.clearCookie(stateKey);
 		var authOptions = {
 			url: 'https://accounts.spotify.com/api/token',
-			// form same as body
 			form: {
 				code: code,
 				redirect_uri: redirect_uri,
@@ -76,15 +75,11 @@ app.get('/callback', function(req, res) {
 		};
 
 		request.post(authOptions, function(error, response, body) {
-			console.log("Requesting access token...");
-
-			// console.log("RESPONSE STATUS CODE: ", response.statusCode);
-			// console.log("BODY: ", body);
-			// console.log("RESPONSE: ", response);
+			console.log("\n\nREQUESTING ACCESS TOKEN USING AUTHORIZATION CODE");
 
 			if (!error && response.statusCode === 200) {
 
-				console.log("Access token granted");
+				console.log("ACCESS TOKEN GRANTED");
 				var access_token = body.access_token;
 				var refresh_token = body.refresh_token;
 
@@ -96,7 +91,7 @@ app.get('/callback', function(req, res) {
 
 				// use access token
 				request.get(options, function(err, response, body) {
-					console.log("body: ", body);
+					// console.log("body: ", body);
 				});
 
 				// redirect to homepage
