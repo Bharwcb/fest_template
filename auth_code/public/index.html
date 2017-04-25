@@ -45,6 +45,35 @@
 	</script>
 
 	<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script>
+		// gets params from url after authorization
+		function getUrlParams() {
+			var urlParams = {};
+			var e, r = /([^&;=]+)=?([^&;]*)/g,
+			var q = window.location.hash.substring(1);
+			while ( e = r.exec(q)) {
+				urlParams[e[1]] = decodeURIComponent(e[2]);
+			}
+			return urlParams;
+		}
+
+		var params = getUrlParams();
+
+		var access_token = params.access_token;
+		var refresh_token = params.refresh_token;
+		var error = params.error;
+
+		if (error) {
+			alert("Error during authentication");
+		} else {
+			alert("Handle params");
+		};
+
+
+
+	</script>
+
 	
 </body>
 </html>
