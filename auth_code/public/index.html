@@ -49,6 +49,7 @@
 	<script>
 		// gets params from url after authorization
 		function getUrlParams() {
+			console.log("\n\nGETURLPARAMS IN INDEX.HTML\n\n");
 			var urlParams = {};
 			var e, r = /([^&;=]+)=?([^&;]*)/g,
 			var q = window.location.hash.substring(1);
@@ -65,9 +66,10 @@
 		var error = params.error;
 
 		if (error) {
-			alert("Error during authentication");
+			alert("Error during authentication: ", error);
 		} else {
-			alert("Handle params");
+			console.log("Access token: ", access_token);
+			console.log("Refresh token: ", refresh_token);
 		};
 
 

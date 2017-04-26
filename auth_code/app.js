@@ -20,7 +20,9 @@ var redirect_uri = 'http://localhost:8888/callback/';
 var stateKey = 'spotify_auth_state';
 
 app
-.use(express.static(__dirname + '/public'))
+.use(express.static(__dirname + '/public'));
+
+app
 .use(cookieParser());
 
 app
