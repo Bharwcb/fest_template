@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Spotify Auth Code</title>
+	<title>Auth Code</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 	<style type="text/css">
 		#login, #loggedin {
 			/*display: none;*/
 		}
 		.text-overflow {
-			overflow: hidden;
+/*			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			width: 500px;
+			width: 500px;*/
 		}
 	</style>
 </head>
@@ -19,20 +19,24 @@
 <body>
 	<div class="container">
 		<div id="login">
-			<h1>Example Auth Code Flow</h1>
+			<h1>Auth Code</h1>
 			<a href="/login" class="btn btn-primary">Login in to Spotify</a>
 		</div>
 		<div id="loggedin">
 			<div id="user-profile"></div>
 			<div id="oauth"></div>
-			<button class="btn btn-default" id="obtain-new-token">Obtain new token with refresh token</button>
+			<button class="btn btn-default" id="obtain-new-token">Obtain new token with refresh</button>
 		</div>
 	</div>
 
-	<script id="loggedin-template" type="text/x-handlebars-template">
-	<!-- does this have to be id=user-profile-template? -->
+	<script id="user-profile-template" type="text/x-handlebars-template">
 		<h1>Logged in as {{display_name}}</h1>
-		<img id="avatar" width="200" src="{{images.0.url}}" />
+		<div class="media">
+			<div class="pull-left">
+				<img class="media-object" width="150" src="{{images.0.url}}" />
+			</div>
+		</div>
+		<div class="media-body">
 			<dl class="dl-horizontal">
 				<dt>Display name</dt><dd>{{display_name}}</dd>
 				<dt>Id</dt><dd>{{id}}</dd>
@@ -40,18 +44,28 @@
 				<dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
 				<dt>link</dt><dd><a href="{{href}}">{{href}}</a></dd>
 				<dt>Profile Image</dt><dd><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
+				<dt>Country</dt><dd>{{country}}</dd>
 			</dl>
-			<p><a href="/">Log in again</a></p>
+		</div>
 	</script>
 
-	<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
-	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script id="oauth-template" type="text/x-handlebars-template">
+		<h2>Oauth info</h2>
+		<dl class="dl-horizontal">
+			<dt>Access Token</dt><dd class="text-overflow">{{access_token}}</dd>
+			<dt>Refresh Token</dt><dd class="text-overflow">{{refresh_token}}</dd>
+		</dl>
+	</script>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
 	<script>
+
 		// gets params from url after authorization
 		function getUrlParams() {
-			console.log("\n\nGETURLPARAMS IN INDEX.HTML\n\n");
 			var urlParams = {};
-			var e, r = /([^&;=]+)=?([^&;]*)/g,
+			var e, r = /([^&;=]+)=?([^&;]*)/g;
 			var q = window.location.hash.substring(1);
 			while ( e = r.exec(q)) {
 				urlParams[e[1]] = decodeURIComponent(e[2]);
@@ -68,11 +82,13 @@
 		if (error) {
 			alert("Error during authentication: ", error);
 		} else {
-			console.log("Access token: ", access_token);
-			console.log("Refresh token: ", refresh_token);
+			if (access_token) {
+				// render oauth info
+				console.log("Access token: ", access_token);
+			} else {
+				// render home screen
+			}
 		};
-
-
 
 	</script>
 

@@ -45,7 +45,7 @@ app
 		show_dialog: true
 	});
 
-	console.log("\n\nREQUESTING SPOTIFY AUTHORIZATION CODE FROM: https://accounts.spotify.com/authorize?", request_auth_code_query);
+	console.log("\n\nREQUESTING SPOTIFY AUTHORIZATION CODE");
 
 	res.redirect('https://accounts.spotify.com/authorize?' + request_auth_code_query);
 });
@@ -81,7 +81,7 @@ app.get('/callback', function(req, res) {
 
 			if (!error && response.statusCode === 200) {
 
-				console.log("ACCESS TOKEN GRANTED");
+				console.log("\n\nACCESS TOKEN GRANTED");
 				var access_token = body.access_token;
 				var refresh_token = body.refresh_token;
 
