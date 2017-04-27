@@ -20,7 +20,9 @@ var redirect_uri = 'http://localhost:8888/callback/';
 var stateKey = 'spotify_auth_state';
 
 app
-.use(express.static(__dirname + '/public'))
+.use(express.static(__dirname + '/public'));
+
+app
 .use(cookieParser());
 
 app
@@ -43,7 +45,7 @@ app
 		show_dialog: true
 	});
 
-	console.log("\n\nREQUESTING SPOTIFY AUTHORIZATION CODE FROM: https://accounts.spotify.com/authorize?", request_auth_code_query);
+	console.log("\nRequesting Auth Code from Spotify");
 
 	res.redirect('https://accounts.spotify.com/authorize?' + request_auth_code_query);
 });
@@ -75,11 +77,11 @@ app.get('/callback', function(req, res) {
 		};
 
 		request.post(authOptions, function(error, response, body) {
-			console.log("\n\nREQUESTING ACCESS TOKEN USING AUTHORIZATION CODE");
+			console.log("\nRequesting Access Token using Auth Code");
 
 			if (!error && response.statusCode === 200) {
 
-				console.log("ACCESS TOKEN GRANTED");
+				console.log("\nAccess Token granted");
 				var access_token = body.access_token;
 				var refresh_token = body.refresh_token;
 
