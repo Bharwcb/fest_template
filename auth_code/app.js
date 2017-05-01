@@ -36,7 +36,7 @@ app
 	var scope = 'user-read-private user-read-email user-follow-read user-library-read user-top-read';
 
 	var request_auth_code_query = querystring.stringify({
-		response_type: 'code',
+		response_type: 'code', 
 		client_id: process.env.CLIENT_ID,
 		scope: scope,
 		redirect_uri: redirect_uri,

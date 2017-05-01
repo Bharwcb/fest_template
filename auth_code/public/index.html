@@ -4,8 +4,8 @@
 	<title>Auth Code</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 	<style type="text/css">
-		#login, #loggedin {
-			/*display: none;*/
+		#loggedin {
+			display: none;
 		}
 		.text-overflow {
 /*			overflow: hidden;
@@ -75,11 +75,11 @@
 
 		var userProfileSource = document.getElementById("user-profile-template").innerHTML,
 		userProfileTemplate = Handlebars.compile(userProfileSource),
-		userProfilePlaceholder = $("#user-profile");
+		userProfilePlaceholder = document.getElementById("user-profile");
 
 		var oauthSource = document.getElementById("oauth-template").innerHTML,
-		oauthTemplate = Handlebars.compile(oauthSource);
-		oauthPlaceholder = $("#oath");
+		oauthTemplate = Handlebars.compile(oauthSource),
+		oauthPlaceholder = document.getElementById("oauth");
 
 		var params = getUrlParams();
 
@@ -92,11 +92,29 @@
 		} else {
 			if (access_token) {
 				// render oauth info
-				
+				oauthPlaceholder.innerHTML = oauthTemplate({
+					// define variables in template
+					access_token: access_token,
+					refresh_token: refresh_token
+				});
+
+				// could i use request module instead?
+				$.ajax({
+					url: 'https://api.spotify.com/v1/me',
+					headers: {
+						'Authorization': 'Bearer ' + access_token
+					},
+					success: function(res) {
+						userProfilePlaceholder.innerHTML = userProfileTemplate(res);
+
+						$('#login').hide();
+						$('#loggedin').show();
 
 
-				// STOPPED HERE
 
+
+					}
+				});
 
 
 			} else {
