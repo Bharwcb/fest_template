@@ -5,7 +5,7 @@
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 	<style type="text/css">
 		#login, #loggedin {
-			/*display: none;*/
+			display: none;
 		}
 		.text-overflow {
 /*			overflow: hidden;
@@ -19,13 +19,12 @@
 <body>
 	<div class="container">
 		<div id="login">
-			<h1>Auth Code</h1>
 			<a href="/login" class="btn btn-primary">Login in to Spotify</a>
 		</div>
 		<div id="loggedin">
 			<div id="user-profile"></div>
 			<div id="oauth"></div>
-			<button class="btn btn-default" id="obtain-new-token">Obtain new token with refresh</button>
+			<button class="btn btn-default" id="obtain-new-token">Request new access token with refresh token</button>
 		</div>
 	</div>
 
@@ -75,11 +74,11 @@
 
 		var userProfileSource = document.getElementById("user-profile-template").innerHTML,
 		userProfileTemplate = Handlebars.compile(userProfileSource),
-		userProfilePlaceholder = $("#user-profile");
+		userProfilePlaceholder = document.getElementById("user-profile");
 
 		var oauthSource = document.getElementById("oauth-template").innerHTML,
-		oauthTemplate = Handlebars.compile(oauthSource);
-		oauthPlaceholder = $("#oath");
+		oauthTemplate = Handlebars.compile(oauthSource),
+		oauthPlaceholder = document.getElementById("oauth");
 
 		var params = getUrlParams();
 
@@ -92,26 +91,47 @@
 		} else {
 			if (access_token) {
 				// render oauth info
-				
+				oauthPlaceholder.innerHTML = oauthTemplate({
+					access_token: access_token,
+					refresh_token: refresh_token
+				});
 
-
-				// STOPPED HERE
-
-
+				$.ajax({
+					url: 'https://api.spotify.com/v1/me',
+					headers: {
+						'Authorization': 'Bearer ' + access_token
+					},
+					success: function(res) {
+						// send JSON response from API call into template
+						userProfilePlaceholder.innerHTML = userProfileTemplate(res);
+						$('#login').hide();
+						$('#loggedin').show();
+					}
+				});
 
 			} else {
-				// render home screen
-
-
-
-				// AND HERE
-
-
+				$('#login').show();
+				$('#loggedin').hide();
 			}
+
+			document.getElementById('obtain-new-token').addEventListener('click', function() {
+				$.ajax({
+					url: '/refresh_token',
+					// send to /refresh_token route with refresh_token variable
+					data: {
+						'refresh_token': refresh_token
+					}
+				}).done(function(data) {
+					access_token = data.access_token;
+					oauthPlaceholder.innerHTML = oauthTemplate({
+						access_token: access_token,
+						refresh_token: refresh_token
+					});
+				});
+			}, false);
+
 		};
-
 	</script>
-
 	
 </body>
 </html>
