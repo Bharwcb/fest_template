@@ -4,7 +4,7 @@
 	<title>Auth Code</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 	<style type="text/css">
-		#loggedin {
+		#login, #loggedin {
 			display: none;
 		}
 		.text-overflow {
@@ -19,7 +19,6 @@
 <body>
 	<div class="container">
 		<div id="login">
-			<h1>Auth Code</h1>
 			<a href="/login" class="btn btn-primary">Login in to Spotify</a>
 		</div>
 		<div id="loggedin">
@@ -93,32 +92,26 @@
 			if (access_token) {
 				// render oauth info
 				oauthPlaceholder.innerHTML = oauthTemplate({
-					// define variables in template
 					access_token: access_token,
 					refresh_token: refresh_token
 				});
 
-				// could i use request module instead?
 				$.ajax({
 					url: 'https://api.spotify.com/v1/me',
 					headers: {
 						'Authorization': 'Bearer ' + access_token
 					},
 					success: function(res) {
+						// send JSON response from API call into template
 						userProfilePlaceholder.innerHTML = userProfileTemplate(res);
-
 						$('#login').hide();
 						$('#loggedin').show();
-
-
-
-
 					}
 				});
 
-
 			} else {
-				// render home screen
+				$('#login').show();
+				$('#loggedin').hide();
 
 
 
