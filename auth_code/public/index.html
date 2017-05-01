@@ -24,7 +24,7 @@
 		<div id="loggedin">
 			<div id="user-profile"></div>
 			<div id="oauth"></div>
-			<button class="btn btn-default" id="obtain-new-token">Obtain new token with refresh</button>
+			<button class="btn btn-default" id="obtain-new-token">Request new access token with refresh token</button>
 		</div>
 	</div>
 
@@ -112,17 +112,26 @@
 			} else {
 				$('#login').show();
 				$('#loggedin').hide();
-
-
-
-				// AND HERE
-
-
 			}
+
+			document.getElementById('obtain-new-token').addEventListener('click', function() {
+				$.ajax({
+					url: '/refresh_token',
+					// send to /refresh_token route with refresh_token variable
+					data: {
+						'refresh_token': refresh_token
+					}
+				}).done(function(data) {
+					access_token = data.access_token;
+					oauthPlaceholder.innerHTML = oauthTemplate({
+						access_token: access_token,
+						refresh_token: refresh_token
+					});
+				});
+			}, false);
+
 		};
-
 	</script>
-
 	
 </body>
 </html>
