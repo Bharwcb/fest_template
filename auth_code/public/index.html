@@ -22,7 +22,9 @@
 			<a href="/login" class="btn btn-primary">Login in to Spotify</a>
 		</div>
 		<div id="loggedin">
+			<!-- placeholders -->
 			<div id="user-profile"></div>
+			<div id="artists-following"></div>
 			<div id="oauth"></div>
 			<button class="btn btn-default" id="obtain-new-token">Request new access token with refresh token</button>
 		</div>
@@ -48,6 +50,16 @@
 		</div>
 	</script>
 
+	<script id="artists-following-template" type="text/x-handlebars-template">
+		<h2>Artists following</h2>
+		<!-- list each artist using Handlebars block. #each means will receive arr --> 
+		<ul>
+			{{#each this}}
+					<li>{{name}}</li>
+			{{/each}}
+		</ul>
+	</script>
+
 	<script id="oauth-template" type="text/x-handlebars-template">
 		<h2>Oauth info</h2>
 		<dl class="dl-horizontal">
@@ -60,7 +72,6 @@
   <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 
 	<script>
-
 		// gets params from url after authorization
 		function getUrlParams() {
 			var urlParams = {};
@@ -75,6 +86,10 @@
 		var userProfileSource = document.getElementById("user-profile-template").innerHTML,
 		userProfileTemplate = Handlebars.compile(userProfileSource),
 		userProfilePlaceholder = document.getElementById("user-profile");
+
+		var artistsFollowingSource = document.getElementById("artists-following-template").innerHTML,
+		artistsFollowingTemplate = Handlebars.compile(artistsFollowingSource),
+		artistsFollowingPlaceholder = document.getElementById("artists-following");
 
 		var oauthSource = document.getElementById("oauth-template").innerHTML,
 		oauthTemplate = Handlebars.compile(oauthSource),
@@ -96,30 +111,44 @@
 					refresh_token: refresh_token
 				});
 
+				// user profile API call
 				$.ajax({
-					url: 'https://api.spotify.com/v1/me',
+					url: "https://api.spotify.com/v1/me",
 					headers: {
-						'Authorization': 'Bearer ' + access_token
+						"Authorization": "Bearer " + access_token
 					},
 					success: function(res) {
 						// send JSON response from API call into template
 						userProfilePlaceholder.innerHTML = userProfileTemplate(res);
-						$('#login').hide();
-						$('#loggedin').show();
+						$("#login").hide();
+						$("#loggedin").show();
+					}
+				});
+
+				// artists following API call
+				$.ajax({
+					url: "https://api.spotify.com/v1/me/following?type=artist&limit=50",
+					headers: {
+						"Authorization": "Bearer " + access_token
+					},
+					success: function(res) {
+						var artists = res.artists.items;
+						// send arr of artist objects from API call into template
+						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artists);
 					}
 				});
 
 			} else {
-				$('#login').show();
-				$('#loggedin').hide();
+				$("#login").show();
+				$("#loggedin").hide();
 			}
 
-			document.getElementById('obtain-new-token').addEventListener('click', function() {
+			document.getElementById("obtain-new-token").addEventListener("click", function() {
 				$.ajax({
-					url: '/refresh_token',
+					url: "/refresh_token",
 					// send to /refresh_token route with refresh_token variable
 					data: {
-						'refresh_token': refresh_token
+						"refresh_token": refresh_token
 					}
 				}).done(function(data) {
 					access_token = data.access_token;
