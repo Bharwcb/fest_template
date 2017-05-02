@@ -69,7 +69,6 @@
   <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 
 	<script>
-
 		// gets params from url after authorization
 		function getUrlParams() {
 			var urlParams = {};
@@ -130,14 +129,14 @@
 						"Authorization": "Bearer " + access_token
 					},
 					success: function(res) {
-						console.log("\nArtists Following: ", res);
-						console.log("\nItems: ", res.items);
+						// send JSON response from API call into template
+						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(res)
+						var artists = res.artists.items;
+						artists.forEach(function(artist) {
+
+						})
 					}
-				})
-
-
-
-
+				});
 
 			} else {
 				$("#login").show();
