@@ -125,12 +125,13 @@
 
 				// artists following API call
 				$.ajax({
-					url: "https://api.spotify.com/v1/me/following?type=artist",
+					url: "https://api.spotify.com/v1/me/following?type=artist&limit=50",
 					headers: {
 						"Authorization": "Bearer " + access_token
 					},
 					success: function(res) {
-						console.log("Artists Following: ", res);
+						console.log("\nArtists Following: ", res);
+						console.log("\nItems: ", res.items);
 					}
 				})
 
