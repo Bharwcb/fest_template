@@ -52,14 +52,12 @@
 
 	<script id="artists-following-template" type="text/x-handlebars-template">
 		<h2>Artists following</h2>
-		
-		<!-- li for each artist using Handlebars block--> 
+		<!-- list each artist using Handlebars block. #each means will receive arr --> 
 		<ul>
 			{{#each this}}
 					<li>{{name}}</li>
 			{{/each}}
 		</ul>
-
 	</script>
 
 	<script id="oauth-template" type="text/x-handlebars-template">
@@ -135,10 +133,8 @@
 					},
 					success: function(res) {
 						var artists = res.artists.items;
-						// send JSON response from API call into template
-						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artists)
-						// artists[0].name - first name in array
-
+						// send arr of artist objects from API call into template
+						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artists);
 					}
 				});
 
