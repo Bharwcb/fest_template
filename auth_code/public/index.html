@@ -25,6 +25,7 @@
 			<!-- placeholders -->
 			<div id="user-profile"></div>
 			<div id="artists-following"></div>
+			<div id="saved-artists"></div>
 			<div id="oauth"></div>
 			<button class="btn btn-default" id="obtain-new-token">Request new access token with refresh token</button>
 		</div>
@@ -60,6 +61,16 @@
 		</ul>
 	</script>
 
+	<script id="saved-artists-template" type="text/x-handlebars-template">
+		<h2>Saved Artists</h2>
+		<ul>
+			<!-- Iterate through all saved artists -->
+			{{#each this}}
+				<li>{{name}}</li>
+			{{/each}}
+		</ul>
+	</script>
+
 	<script id="oauth-template" type="text/x-handlebars-template">
 		<h2>Oauth info</h2>
 		<dl class="dl-horizontal">
@@ -90,6 +101,10 @@
 		var artistsFollowingSource = document.getElementById("artists-following-template").innerHTML,
 		artistsFollowingTemplate = Handlebars.compile(artistsFollowingSource),
 		artistsFollowingPlaceholder = document.getElementById("artists-following");
+
+		var savedArtistsSource = document.getElementById("saved-artists-template").innerHTML,
+		savedArtistsTemplate = Handlebars.compile(savedArtistsSource),
+		savedArtistsPlaceholder = document.getElementById("saved-artists");
 
 		var oauthSource = document.getElementById("oauth-template").innerHTML,
 		oauthTemplate = Handlebars.compile(oauthSource),
@@ -133,8 +148,25 @@
 					},
 					success: function(res) {
 						var artists = res.artists.items;
-						// send arr of artist objects from API call into template
+						// send array of artist objects from API call into template
 						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artists);
+					}
+				});
+
+				// saved artists API call
+				// USE OFFSET TO LOOP THROUGH ALL PAGES 
+				// AVOID DUPLICATES (more than one song by an artists - only need a list of artists)
+				// WHAT IF MULTIPLE ARTISTS ON TRACK?  ARTISTS IS AN ARRAY
+				$.ajax({
+					url: "https://api.spotify.com/v1/me/tracks?limit=50",
+					headers: {
+						"Authorization": "Bearer " + access_token
+					},
+					success: function(res) {
+						var tracks = res.items;
+						console.log("test first track name: (wont actually need track names, only array of artists of the track) ", tracks[0].track.name);
+						// send array of all tracks to template
+						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(tracks);
 					}
 				});
 
