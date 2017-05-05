@@ -154,9 +154,11 @@
 				});
 
 				// saved artists API call
+
+				// PRINT ALL ARISTS OF FIRST TRACK (IT IS AN ARRAY)
 				// USE OFFSET TO LOOP THROUGH ALL PAGES 
 				// AVOID DUPLICATES (more than one song by an artists - only need a list of artists)
-				// WHAT IF MULTIPLE ARTISTS ON TRACK?  ARTISTS IS AN ARRAY
+
 				$.ajax({
 					url: "https://api.spotify.com/v1/me/tracks?limit=50",
 					headers: {
