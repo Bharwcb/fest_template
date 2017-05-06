@@ -66,7 +66,7 @@
 		<ul>
 			<!-- Iterate through all saved artists -->
 			{{#each this}}
-				<li>{{name}}</li>
+				<li>{{track.artists.[0].name}}</li>
 			{{/each}}
 		</ul>
 	</script>
@@ -154,11 +154,6 @@
 				});
 
 				// saved artists API call
-
-				// PRINT ALL ARISTS OF FIRST TRACK (IT IS AN ARRAY)
-				// USE OFFSET TO LOOP THROUGH ALL PAGES 
-				// AVOID DUPLICATES (more than one song by an artists - only need a list of artists)
-
 				$.ajax({
 					url: "https://api.spotify.com/v1/me/tracks?limit=50",
 					headers: {
@@ -166,9 +161,12 @@
 					},
 					success: function(res) {
 						var tracks = res.items;
-						console.log("test first track name: (wont actually need track names, only array of artists of the track) ", tracks[0].track.name);
 						// send array of all tracks to template
 						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(tracks);
+
+						console.log("artists: ", tracks[0].track.artists[0].name);
+
+						// test first track name: tracks[0].track.name
 					}
 				});
 
