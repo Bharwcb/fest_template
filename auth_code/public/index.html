@@ -64,12 +64,19 @@
 	<script id="saved-artists-template" type="text/x-handlebars-template">
 		<h2>Saved Artists</h2>
 		<ul>
-			<!-- Iterate through all saved artists -->
+			<!-- Iterate through all saved artists. this = list of items -->
 			{{#each this}}
-				<li>{{track.artists.[0].name}}</li>
+				<li>Track name: {{track.name}}</li>
+				<ul>
+					{{#track.artists}}
+						<li>{{name}}</li>
+					<!-- <li>{{track.artists.[0].name}}</li> -->
+					{{/track.artists}}
+				</ul>
 			{{/each}}
 		</ul>
 	</script>
+
 
 	<script id="oauth-template" type="text/x-handlebars-template">
 		<h2>Oauth info</h2>
