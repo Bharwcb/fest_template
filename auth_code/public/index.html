@@ -168,24 +168,19 @@
 						"Authorization": "Bearer " + access_token
 					},
 					success: function(res) {
-
 						var totalTracks = res.total;
-						console.log("TOTAL: ", totalTracks);
+						console.log("Total Tracks: ", totalTracks);
 						var page1Tracks = res.items;
 						var allTracks = page1Tracks;
 						
-						console.log("pushing in page1Tracks to allTracks in this format: ", page1Tracks);
-						console.log("allTracks format: ", allTracks);
-						console.log("0 index page1Tracks: ", page1Tracks[0]);
-						console.log("0 index allTracks: ", allTracks[0]);
+						// NEXT: create a loop, in increments of 50, until totalTracks.
+							// same ajax API call but offset = 50, 100, etc.
+							// make sure this actually works and does not skip any artists
+
 
 
 						// send array of all tracks to template
-						// *****!!!!!! but now, instead of 'tracks' (which was just 1st page), will send allTracks 
-
-						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(page1Tracks);
-
-						
+						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(allTracks);
 
 					}
 				});
