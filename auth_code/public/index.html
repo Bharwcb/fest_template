@@ -171,18 +171,19 @@
 
 						var totalTracks = res.total;
 						console.log("TOTAL: ", totalTracks);
-						var allTracks = [];
-						var Page1Tracks = res.items;
-						allTracks.push(Page1Tracks);
+						var page1Tracks = res.items;
+						var allTracks = page1Tracks;
 						
-						console.log("pushing in page1Tracks to allTracks in this format: ", Page1Tracks);
+						console.log("pushing in page1Tracks to allTracks in this format: ", page1Tracks);
 						console.log("allTracks format: ", allTracks);
+						console.log("0 index page1Tracks: ", page1Tracks[0]);
+						console.log("0 index allTracks: ", allTracks[0]);
 
 
 						// send array of all tracks to template
 						// *****!!!!!! but now, instead of 'tracks' (which was just 1st page), will send allTracks 
 
-						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(Page1Tracks);
+						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(page1Tracks);
 
 						
 
