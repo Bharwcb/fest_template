@@ -146,6 +146,7 @@
 					}
 				});
 
+
 				// artists following API call
 				$.ajax({
 					url: "https://api.spotify.com/v1/me/following?type=artist&limit=50",
@@ -159,6 +160,7 @@
 					}
 				});
 
+
 				// saved artists API call
 				$.ajax({
 					url: "https://api.spotify.com/v1/me/tracks?limit=50",
@@ -166,9 +168,23 @@
 						"Authorization": "Bearer " + access_token
 					},
 					success: function(res) {
-						var tracks = res.items;
+
+						var totalTracks = res.total;
+						console.log("TOTAL: ", totalTracks);
+						var allTracks = [];
+						var Page1Tracks = res.items;
+						allTracks.push(Page1Tracks);
+						
+						console.log("pushing in page1Tracks to allTracks in this format: ", Page1Tracks);
+						console.log("allTracks format: ", allTracks);
+
+
 						// send array of all tracks to template
-						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(tracks);
+						// *****!!!!!! but now, instead of 'tracks' (which was just 1st page), will send allTracks 
+
+						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(Page1Tracks);
+
+						
 
 					}
 				});
