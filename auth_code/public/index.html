@@ -172,16 +172,27 @@
 						console.log("Total Tracks: ", totalTracks);
 						var page1Tracks = res.items;
 						var allTracks = page1Tracks;
-						
+						var artists = [];
+
 						// NEXT: create a loop, in increments of 50, until totalTracks.
 							// same ajax API call but offset = 50, 100, etc.
 							// make sure this actually works and does not skip any artists
 
 
 
+						// build artists array, will build from entire allTracks array
+						allTracks.forEach(function(track){
+							var trackArtists = track.track.artists;
+							trackArtists.forEach(function(artist){
+								artists.push(artist.name);
+							})
+						})
+
+						console.log("artists: ", artists);
+
+
 						// send array of all tracks to template
 						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(allTracks);
-
 					}
 				});
 
