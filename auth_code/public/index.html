@@ -76,7 +76,6 @@
 		</ul>
 	</script>
 
-
 	<script id="oauth-template" type="text/x-handlebars-template">
 		<h2>Oauth info</h2>
 		<dl class="dl-horizontal">
@@ -155,52 +154,58 @@
 						"Authorization": "Bearer " + access_token
 					},
 					success: function(res) {
-						var artists = res.artists.items;
+						var artistsFollowing = res.artists.items;
 						// send array of artist objects from API call into template
-						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artists);
+						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
 					}
 				});
 
 
 				// saved artists API call
+				var offset = 0;
 				$.ajax({
-					url: "https://api.spotify.com/v1/me/tracks?limit=50",
+					url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 					headers: {
 						"Authorization": "Bearer " + access_token
 					},
 					success: function(res) {
-						var totalTracks = res.total;
-						console.log("Total Tracks: ", totalTracks);
-						var page1Tracks = res.items;
-						var allTracks = page1Tracks;
+						console.log("Total Tracks: ", res.total);
 						var artists = [];
 
-						// NEXT: create a loop, in increments of 50, until totalTracks.
-							// same ajax API call but offset = 50, 100, etc.
-							// make sure this actually works and does not skip any artists
-
-
-
-						// Build artists array from all API response pages (allTracks)
-						allTracks.forEach(function(track){
+						// push API's first page response to artists
+						res.items.forEach(function(track){
 							var trackArtists = track.track.artists;
 							trackArtists.forEach(function(artist){
 								artists.push(artist.name);
 							})
-						})
-						// lodash method .uniq
+						});
+
+						// push all additional API page responses to artists
+						while (offset < res.total) {
+							console.log("offset: ", offset);
+							$.ajax({
+								url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
+								headers: {
+									"Authorization": "Bearer " + access_token
+								},
+								success: function(additional_api_response) {
+									additional_api_response.items.forEach(function(track){
+										track.track.artists.forEach(function(artist){
+											artists.push(artist.name);
+										})
+									});
+								}
+							});
+							offset += 50;
+						}
+
+						// lodash
 						artists = _.uniq(artists);
 						console.log("unique artists list: ", artists);
 
+						// EXPORT THIS ARTISTS ARRAY TO APP.JS 
 
-
-						// Must be able to export this artists array to javascript file
-
-
-
-
-						// send array of all tracks to template
-						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(allTracks);
+						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
 					}
 				});
 
