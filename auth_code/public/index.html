@@ -163,6 +163,7 @@
 
 				// saved artists API call
 				var offset = 0;
+				var savedArtists = [];
 				$.ajax({
 					url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 					headers: {
@@ -170,38 +171,39 @@
 					},
 					success: function(res) {
 						console.log("Total Tracks: ", res.total);
-						var artists = [];
 
 						// push API's first page response to artists
 						res.items.forEach(function(track){
-							var trackArtists = track.track.artists;
-							trackArtists.forEach(function(artist){
-								artists.push(artist.name);
+							track.track.artists.forEach(function(artist){
+								savedArtists.push(artist.name);
 							})
 						});
 
 						// push all additional API page responses to artists
 						while (offset < res.total) {
-							console.log("offset: ", offset);
 							$.ajax({
 								url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 								headers: {
 									"Authorization": "Bearer " + access_token
 								},
 								success: function(additional_api_response) {
-									additional_api_response.items.forEach(function(track){
-										track.track.artists.forEach(function(artist){
-											artists.push(artist.name);
+									additional_api_response.items.forEach(function(additional_track){
+										additional_track.track.artists.forEach(function(additional_artist){
+											savedArtists.push(additional_artist.name);
 										})
 									});
+									console.log("in loop, artists length: ", savedArtists.length);
 								}
 							});
 							offset += 50;
-						}
+							console.log("offset: ", offset);
+						};
 
+						console.log("artists length (why is this only taking # of artists from 1st page): ", savedArtists.length);
+ 
 						// lodash
-						artists = _.uniq(artists);
-						console.log("unique artists list: ", artists);
+						// savedArtists = _.uniq(savedArtists);
+						// console.log("unique artists: ", savedArtists);
 
 						// EXPORT THIS ARTISTS ARRAY TO APP.JS 
 
