@@ -171,49 +171,39 @@
 					},
 					success: function(res) {
 						console.log("Total Tracks: ", res.total);
-						// start with pushing 1st page of API response to allTracks
-						var allTracks = res.items;
 						var artists = [];
 
-
-
-
-						// NEXT: create a loop, & keep making API calls until offset > res.total
-						console.log("next: ", res.next);
+						// add first page artists
+						res.items.forEach(function(track){
+							var trackArtists = track.track.artists;
+							trackArtists.forEach(function(artist){
+								artists.push(artist.name);
+							})
+						});
 
 						while (offset < res.total) {
 							console.log("offset: ", offset);
 							$.ajax({
-
-								// THINKING THIS URL FOR ADDITINOAL API PAGE REQUESTS IS NOT WORKING.. NEED TO CONSOLE.LOG IT
-
 								url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 								headers: {
 									"Authorization": "Bearer " + access_token
 								},
-								success: function(additional_api_responses, req) {
-
-									allTracks.push.apply(additional_api_responses);
+								success: function(additional_api_response) {
+									additional_api_response.items.forEach(function(track){
+										track.track.artists.forEach(function(artist){
+											artists.push(artist.name);
+										})
+									});
+									// console.log("artists in loop: ", artists);
 								},
-								error: function(err, req) {
+								error: function(err) {
 									console.log("err in additional API pages: ", err);
 								}
 							});
 							offset += 50;
 						}
 
-						// at this point, tracks from all API response pages should be in allTracks.
-						console.log("allTracks: ", allTracks);
 
-
-
-						// Build artists array from allTracks
-						allTracks.forEach(function(track){
-							var trackArtists = track.track.artists;
-							trackArtists.forEach(function(artist){
-								artists.push(artist.name);
-							})
-						})
 						// lodash method .uniq
 						artists = _.uniq(artists);
 						console.log("unique artists list: ", artists);
@@ -223,7 +213,7 @@
 
 
 						// send array of all tracks to template
-						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(allTracks);
+						// savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(allTracks);
 					}
 				});
 
