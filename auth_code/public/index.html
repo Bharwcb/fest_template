@@ -169,15 +169,13 @@
 						"Authorization": "Bearer " + access_token
 					},
 					success: function(res) {
-						var totalTracks = res.total;
-						console.log("Total Tracks: ", totalTracks);
-						var page1Tracks = res.items;
-						var allTracks = page1Tracks;
+						console.log("Total Tracks: ", res.total);
+						// start with pushing 1st page of API response to allTracks
+						var allTracks = res.items;
 						var artists = [];
 
-						// NEXT: create a loop, in increments of 50, until totalTracks.
-							// same ajax API call but offset = 50, 100, etc.
-							// make sure this actually works and does not skip any artists
+						// NEXT: create a loop, & keep making API calls until res.next = null
+						
 
 
 
