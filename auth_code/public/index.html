@@ -155,9 +155,9 @@
 						"Authorization": "Bearer " + access_token
 					},
 					success: function(res) {
-						var artists = res.artists.items;
+						var artistsFollowing = res.artists.items;
 						// send array of artist objects from API call into template
-						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artists);
+						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
 					}
 				});
 
@@ -173,7 +173,7 @@
 						console.log("Total Tracks: ", res.total);
 						var artists = [];
 
-						// add first page artists
+						// push API's first page response to artists
 						res.items.forEach(function(track){
 							var trackArtists = track.track.artists;
 							trackArtists.forEach(function(artist){
@@ -181,6 +181,7 @@
 							})
 						});
 
+						// push all additional API page responses to artists
 						while (offset < res.total) {
 							console.log("offset: ", offset);
 							$.ajax({
@@ -194,26 +195,18 @@
 											artists.push(artist.name);
 										})
 									});
-									// console.log("artists in loop: ", artists);
-								},
-								error: function(err) {
-									console.log("err in additional API pages: ", err);
 								}
 							});
 							offset += 50;
 						}
 
-
-						// lodash method .uniq
+						// lodash
 						artists = _.uniq(artists);
 						console.log("unique artists list: ", artists);
 
-
 						// EXPORT THIS ARTISTS ARRAY TO APP.JS 
 
-
-						// send array of all tracks to template
-						// savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(allTracks);
+						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
 					}
 				});
 
