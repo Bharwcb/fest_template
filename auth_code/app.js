@@ -3,6 +3,7 @@ var express = require('express');
 var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+var array = require('lodash/array');
 
 var app = express();
 
@@ -139,7 +140,3 @@ app.get('/refresh_token', function(req, res) {
 
 console.log("\nListening on 8888");
 app.listen(8888);
-
-
-
-
