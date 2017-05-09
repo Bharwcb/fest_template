@@ -181,21 +181,21 @@
 
 
 
-						// Build artists array, will build from entire allTracks array
+						// Build artists array from all API response pages (allTracks)
 						allTracks.forEach(function(track){
 							var trackArtists = track.track.artists;
 							trackArtists.forEach(function(artist){
 								artists.push(artist.name);
 							})
 						})
-
-
-						console.log("artists: ", artists);
+						// lodash method .uniq
 						artists = _.uniq(artists);
-						console.log("after: ", artists);
+						console.log("unique artists list: ", artists);
+
 
 
 						// Must be able to export this artists array to javascript file
+
 
 
 
