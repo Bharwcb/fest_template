@@ -87,6 +87,7 @@
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
   <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
 
 	<script>
 		// gets params from url after authorization
@@ -187,9 +188,11 @@
 								artists.push(artist.name);
 							})
 						})
-						
-						console.log("artists: ", artists);
 
+
+						console.log("artists: ", artists);
+						artists = _.uniq(artists);
+						console.log("after: ", artists);
 
 
 						// Must be able to export this artists array to javascript file
@@ -225,5 +228,6 @@
 		};
 	</script>
 	
+
 </body>
 </html>
