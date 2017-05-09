@@ -163,8 +163,10 @@
 
 
 				// saved artists API call
+				var offset = 0;
+				console.log("https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset);
 				$.ajax({
-					url: "https://api.spotify.com/v1/me/tracks?limit=50",
+					url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 					headers: {
 						"Authorization": "Bearer " + access_token
 					},
@@ -174,8 +176,15 @@
 						var allTracks = res.items;
 						var artists = [];
 
-						// NEXT: create a loop, & keep making API calls until res.next = null
-						
+
+
+
+						// NEXT: create a loop, & keep making API calls until offset > res.total
+						console.log("next: ", res.next);
+
+
+
+
 
 
 
@@ -191,10 +200,7 @@
 						console.log("unique artists list: ", artists);
 
 
-
-						// Must be able to export this artists array to javascript file
-
-
+						// EXPORT THIS ARTISTS ARRAY TO APP.JS 
 
 
 						// send array of all tracks to template
