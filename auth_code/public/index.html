@@ -89,9 +89,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
 
 	<script>
-		const EventEmitter = require('events');
-		module.exports = new EventEmitter();
-
 		// gets params from url after authorization
 		function getUrlParams() {
 			var urlParams = {};
@@ -199,7 +196,13 @@
 									// lodash
 									savedArtists = _.uniq(savedArtists);
 									console.log("unique artists: ", savedArtists);
-									exports.savedArtists = savedArtists;
+
+
+
+									module.exports = { savedArtists: savedArtists };
+
+
+
 								}
 							});
 							offset += 50;
