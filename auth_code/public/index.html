@@ -89,6 +89,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
 
 	<script>
+		const EventEmitter = require('events');
+		module.exports = new EventEmitter();
+
 		// gets params from url after authorization
 		function getUrlParams() {
 			var urlParams = {};
@@ -192,20 +195,16 @@
 											savedArtists.push(additional_artist.name);
 										})
 									});
-									console.log("in loop, artists length: ", savedArtists.length);
+									console.log("artists length: ", savedArtists.length);
+									// lodash
+									savedArtists = _.uniq(savedArtists);
+									console.log("unique artists: ", savedArtists);
+									exports.savedArtists = savedArtists;
 								}
 							});
 							offset += 50;
 							console.log("offset: ", offset);
 						};
-
-						console.log("artists length (why is this only taking # of artists from 1st page): ", savedArtists.length);
- 
-						// lodash
-						// savedArtists = _.uniq(savedArtists);
-						// console.log("unique artists: ", savedArtists);
-
-						// EXPORT THIS ARTISTS ARRAY TO APP.JS 
 
 						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
 					}
