@@ -170,7 +170,6 @@
 						"Authorization": "Bearer " + access_token
 					},
 					success: function(res) {
-						console.log("Total Tracks: ", res.total);
 
 						// push API's first page response to artists
 						res.items.forEach(function(track){
@@ -192,26 +191,26 @@
 											savedArtists.push(additional_artist.name);
 										})
 									});
-									console.log("artists length: ", savedArtists.length);
-									// lodash
-									savedArtists = _.uniq(savedArtists);
-									console.log("unique artists: ", savedArtists);
-
-
-
-									module.exports = { savedArtists: savedArtists };
-
-
-
+									console.log("total artists: ", savedArtists.length);
 								}
 							});
 							offset += 50;
-							console.log("offset: ", offset);
 						};
 
+						// export savedArtists
+						console.log("TOTAL: ", savedArtists.length);
+						// lodash
+						savedArtists = _.uniq(savedArtists);
+						console.log("unique artists: ", savedArtists.length);
+						$.data(document, "savedArtists", savedArtists);
+						console.log("Working? Value of $.data is: " + $.data(document, "savedArtists"));
 						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
-					}
-				});
+
+					} // success
+
+				}); // ajax
+				
+			console.log("unique artists: ", savedArtists.length);	
 
 			} else {
 				$("#login").show();
