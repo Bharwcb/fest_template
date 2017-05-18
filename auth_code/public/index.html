@@ -201,8 +201,14 @@
 						offset += 50;
 					};
 
+					// return all promises
 					$.when.apply($, savedArtistsPromises).then(function() {
-						console.log("hay");
+						console.log("all promises complete");
+						// export savedArtists
+						console.log("TOTAL: ", savedArtists.length);
+						// lodash
+						savedArtists = _.uniq(savedArtists);
+						console.log("unique artists: ", savedArtists.length);
 					});
 
 				})
@@ -211,12 +217,7 @@
 				})
 
 
-			// export savedArtists
-			console.log("TOTAL: ", savedArtists.length);
-			// lodash
-			savedArtists = _.uniq(savedArtists);
-			console.log("unique artists: ", savedArtists.length);
-			
+
 			// $.data(document, "savedArtists", savedArtists);
 			// console.log("Working? Value of $.data is: " + $.data(document, "savedArtists"));
 			// savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
