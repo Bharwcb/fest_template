@@ -168,48 +168,63 @@
 					url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 					headers: {
 						"Authorization": "Bearer " + access_token
-					},
-					success: function(res) {
-						console.log("Total Tracks: ", res.total);
-
-						// push API's first page response to artists
-						res.items.forEach(function(track){
-							track.track.artists.forEach(function(artist){
-								savedArtists.push(artist.name);
-							})
-						});
-
-						// push all additional API page responses to artists
-						while (offset < res.total) {
-							$.ajax({
-								url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
-								headers: {
-									"Authorization": "Bearer " + access_token
-								},
-								success: function(additional_api_response) {
-									additional_api_response.items.forEach(function(additional_track){
-										additional_track.track.artists.forEach(function(additional_artist){
-											savedArtists.push(additional_artist.name);
-										})
-									});
-									console.log("in loop, artists length: ", savedArtists.length);
-								}
-							});
-							offset += 50;
-							console.log("offset: ", offset);
-						};
-
-						console.log("artists length (why is this only taking # of artists from 1st page): ", savedArtists.length);
- 
-						// lodash
-						// savedArtists = _.uniq(savedArtists);
-						// console.log("unique artists: ", savedArtists);
-
-						// EXPORT THIS ARTISTS ARRAY TO APP.JS 
-
-						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
 					}
-				});
+				})
+				.done(function(res){
+					// push first page response artist names to savedArtists
+					res.items.forEach(function(track){
+						track.track.artists.forEach(function(artist){
+							savedArtists.push(artist.name);
+						})
+					});
+
+					// push all additional API page responses to artists
+					let savedArtistsPromises = [];
+
+					while (offset < res.total) {
+						let promise = $.ajax({
+							url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
+							headers: {
+								"Authorization": "Bearer " + access_token
+							}
+						})
+						.done(function(additional_api_res) {
+							additional_api_res.items.forEach(function(additional_track){
+								additional_track.track.artists.forEach(function(additional_artist){
+									savedArtists.push(additional_artist.name);
+								})
+							});
+						});
+						savedArtistsPromises.push(promise);
+						offset += 50;
+					};
+
+					// run all promises, and when all successful run this function
+					$.when.apply($, savedArtistsPromises).then(function() {
+						// lodash
+						savedArtists = _.uniq(savedArtists);
+						console.log("unique artists: ", savedArtists.length);
+
+
+
+						// export savedArtists
+
+
+
+					});
+
+				})
+				.fail(function(err){
+					console.log("error in saved artists api call");
+				})
+
+
+
+			// $.data(document, "savedArtists", savedArtists);
+			// console.log("Working? Value of $.data is: " + $.data(document, "savedArtists"));
+			// savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
+
+
 
 			} else {
 				$("#login").show();
