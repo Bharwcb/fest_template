@@ -168,34 +168,41 @@
 					url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 					headers: {
 						"Authorization": "Bearer " + access_token
-					},
-					success: function(res) {
+					}
+				})
+				.done(function(res){
+					// push first page response artist names to savedArtists
+					res.items.forEach(function(track){
+						track.track.artists.forEach(function(artist){
+							savedArtists.push(artist.name);
+						})
+					});
 
-						// push API's first page response to artists
-						res.items.forEach(function(track){
-							track.track.artists.forEach(function(artist){
-								savedArtists.push(artist.name);
-							})
+					console.log("done: ", savedArtists);
+
+					// push all additional API page responses to artists
+					while (offset < res.total) {
+						$.ajax({
+							url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
+							headers: {
+								"Authorization": "Bearer " + access_token
+							},
+							success: function(additional_api_response) {
+								additional_api_response.items.forEach(function(additional_track){
+									additional_track.track.artists.forEach(function(additional_artist){
+										savedArtists.push(additional_artist.name);
+									})
+								});
+								console.log("total artists: ", savedArtists.length);
+							}
 						});
+						offset += 50;
+					};
+				})
 
-						// push all additional API page responses to artists
-						while (offset < res.total) {
-							$.ajax({
-								url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
-								headers: {
-									"Authorization": "Bearer " + access_token
-								},
-								success: function(additional_api_response) {
-									additional_api_response.items.forEach(function(additional_track){
-										additional_track.track.artists.forEach(function(additional_artist){
-											savedArtists.push(additional_artist.name);
-										})
-									});
-									console.log("total artists: ", savedArtists.length);
-								}
-							});
-							offset += 50;
-						};
+						
+
+						
 
 						// export savedArtists
 						console.log("TOTAL: ", savedArtists.length);
@@ -206,9 +213,9 @@
 						console.log("Working? Value of $.data is: " + $.data(document, "savedArtists"));
 						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
 
-					} // success
+					// done
 
-				}); // ajax
+				// ajax
 				
 			console.log("unique artists: ", savedArtists.length);	
 
