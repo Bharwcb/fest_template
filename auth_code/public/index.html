@@ -178,7 +178,6 @@
 						})
 					});
 
-					console.log("done: ", savedArtists);
 
 					// push all additional API page responses to artists
 					while (offset < res.total) {
@@ -199,25 +198,25 @@
 						offset += 50;
 					};
 				})
+				.fail(function(err){
+					console.log("error in saved artists api call");
+				})
 
 						
 
 						
 
-						// export savedArtists
-						console.log("TOTAL: ", savedArtists.length);
-						// lodash
-						savedArtists = _.uniq(savedArtists);
-						console.log("unique artists: ", savedArtists.length);
-						$.data(document, "savedArtists", savedArtists);
-						console.log("Working? Value of $.data is: " + $.data(document, "savedArtists"));
-						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
+			// export savedArtists
+			console.log("TOTAL: ", savedArtists.length);
+			// lodash
+			savedArtists = _.uniq(savedArtists);
+			console.log("unique artists: ", savedArtists.length);
+			$.data(document, "savedArtists", savedArtists);
+			console.log("Working? Value of $.data is: " + $.data(document, "savedArtists"));
+			savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
 
-					// done
 
-				// ajax
-				
-			console.log("unique artists: ", savedArtists.length);	
+
 
 			} else {
 				$("#login").show();
