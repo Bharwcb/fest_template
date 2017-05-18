@@ -178,10 +178,11 @@
 						})
 					});
 
-
 					// push all additional API page responses to artists
+					let savedArtistsPromises = [];
+
 					while (offset < res.total) {
-						$.ajax({
+						let promise = $.ajax({
 							url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 							headers: {
 								"Authorization": "Bearer " + access_token
@@ -195,26 +196,30 @@
 								console.log("total artists: ", savedArtists.length);
 							}
 						});
+						savedArtistsPromises.push(promise);
+						console.log("offset: ", offset);
 						offset += 50;
 					};
+
+					$.when.apply($, savedArtistsPromises).then(function() {
+						console.log("hay");
+					});
+
 				})
 				.fail(function(err){
 					console.log("error in saved artists api call");
 				})
 
-						
-
-						
 
 			// export savedArtists
 			console.log("TOTAL: ", savedArtists.length);
 			// lodash
 			savedArtists = _.uniq(savedArtists);
 			console.log("unique artists: ", savedArtists.length);
-			$.data(document, "savedArtists", savedArtists);
-			console.log("Working? Value of $.data is: " + $.data(document, "savedArtists"));
-			savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
-
+			
+			// $.data(document, "savedArtists", savedArtists);
+			// console.log("Working? Value of $.data is: " + $.data(document, "savedArtists"));
+			// savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(res.items);
 
 
 
