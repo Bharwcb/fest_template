@@ -146,22 +146,27 @@
 				let artistsFollowing = [];
 
 				$.ajax({
-					url: "https://api.spotify.com/v1/me/following?type=artist&limit=3&offset=",
+					url: "https://api.spotify.com/v1/me/following?type=artist&limit=3&offset=" + offset,
 					headers: {
 						"Authorization": "Bearer " + access_token
 					}
 				})
 				.done(function(res) {
-					// push first page response into artistsFollowing arr
+					// push first page response into artistsFollowing
 					res.artists.items.forEach(function(artist) {
 						artistsFollowing.push(artist.name);
-						console.log("array: ", artistsFollowing);
 					});
 
 					// collect all additional API page requests 
 					let artistsFollowingPromises = [];
 
+					console.log("response total: ", res.artists.total);
 					while (offset < res.artists.total) {
+
+
+						// THIS IS WHERE IT'S FAILING.  MUST NOT BE ADDING OFFSET CORRECTLY.
+
+						
 						let promise = $.ajax({
 							url: "https://api.spotify.com/v1/me/following?type=artist&limit=3&offset=" + offset,
 							headers: {
@@ -169,17 +174,20 @@
 							}
 						})
 						.done(function(additional_api_res) {
-							additional_api_res.artists.items.forEach(function(artist) {
-								artistsFollowing.push(artist.name);
-							})
+							console.log("BAD - additional response is all from first page: ", additional_api_res);
+							additional_api_res.artists.items.forEach(function(additional_artist) {
+								artistsFollowing.push(additional_artist.name);
+							});
 						});
 						artistsFollowingPromises.push(promise);
+						console.log("offset: ", offset);
 						offset += 3;
 					};
 
 					// // run all promises, and when all successful run this function
 					$.when.apply($, artistsFollowingPromises).then(function() {
 						console.log("artistsFollowing is an array of artists you follow: ", artistsFollowing.length);
+						console.log("artists following array: ", artistsFollowing);
 						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
 					});
 
