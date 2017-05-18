@@ -186,26 +186,21 @@
 							url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 							headers: {
 								"Authorization": "Bearer " + access_token
-							},
-							success: function(additional_api_response) {
-								additional_api_response.items.forEach(function(additional_track){
-									additional_track.track.artists.forEach(function(additional_artist){
-										savedArtists.push(additional_artist.name);
-									})
-								});
-								console.log("total artists: ", savedArtists.length);
 							}
+						})
+						.done(function(additional_api_res) {
+							additional_api_res.items.forEach(function(additional_track){
+								additional_track.track.artists.forEach(function(additional_artist){
+									savedArtists.push(additional_artist.name);
+								})
+							});
 						});
 						savedArtistsPromises.push(promise);
-						console.log("offset: ", offset);
 						offset += 50;
 					};
 
-					// return all promises
+					// run all promises, and when all successful run this function
 					$.when.apply($, savedArtistsPromises).then(function() {
-						console.log("all promises complete");
-						// export savedArtists
-						console.log("TOTAL: ", savedArtists.length);
 						// lodash
 						savedArtists = _.uniq(savedArtists);
 						console.log("unique artists: ", savedArtists.length);
