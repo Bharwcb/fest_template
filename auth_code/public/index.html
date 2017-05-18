@@ -153,7 +153,7 @@
 				})
 				.done(function(res) {
 					// push first page response into artistsFollowing arr
-					res.artists.items.forEach(function(artist){
+					res.artists.items.forEach(function(artist) {
 						artistsFollowing.push(artist.name);
 						console.log("array: ", artistsFollowing);
 					});
@@ -169,18 +169,29 @@
 							}
 						})
 						.done(function(additional_api_res) {
-							console.log("yo: ", additional_api_res);
-						})
+							additional_api_res.artists.items.forEach(function(artist) {
+								artistsFollowing.push(artist);
+							})
+						});
+						artistsFollowingPromises.push(promise);
+						offset += 50;
+					};
 
-
+					// run all promises, and when all successful run this function
+					$.when.apply($, artistsFollowingPromises).then(function() {
+						console.log("all artists following promises complete");
 					}
 
 
 					// send array of artist objects from API call into template
 					artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(res.artists.items);
-				});
 
-				
+
+				})
+				.fail(function(err){
+					console.log("error in artists following api call");
+				})
+
 
 				// saved artists API call
 				offset = 0;
@@ -204,7 +215,7 @@
 					let savedArtistsPromises = [];
 
 					while (offset < res.total) {
-						let promise = $.ajax({
+						promise = $.ajax({
 							url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 							headers: {
 								"Authorization": "Bearer " + access_token
