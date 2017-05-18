@@ -56,7 +56,7 @@
 		<!-- list each artist using Handlebars block. #each means will receive arr --> 
 		<ul>
 			{{#each this}}
-					<li>{{name}}</li>
+					<li>{{this}}</li>
 			{{/each}}
 		</ul>
 	</script>
@@ -170,22 +170,22 @@
 						})
 						.done(function(additional_api_res) {
 							additional_api_res.artists.items.forEach(function(artist) {
-								artistsFollowing.push(artist);
+								artistsFollowing.push(artist.name);
 							})
 						});
 						artistsFollowingPromises.push(promise);
-						offset += 50;
+						offset += 3;
 					};
 
-					// run all promises, and when all successful run this function
+					// // run all promises, and when all successful run this function
 					$.when.apply($, artistsFollowingPromises).then(function() {
-						console.log("all artists following promises complete");
-					}
+						console.log("artistsFollowing is an array of artists you follow: ", artistsFollowing.length);
+						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
+					});
 
 
 					// send array of artist objects from API call into template
-					artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(res.artists.items);
-
+					
 
 				})
 				.fail(function(err){
