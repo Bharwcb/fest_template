@@ -145,7 +145,7 @@
 
 				// artists following API call
 				let artistsFollowing = [];
-				let next_call = "";
+				let next_call = null;
 
 				$.ajax({
 					url: "https://api.spotify.com/v1/me/following?type=artist&limit=3",
@@ -165,8 +165,8 @@
 					let artistsFollowingPromises = [];
 
 
-					// while (next_call !== null) {
-						console.log("test");
+					// while (next_call) {
+						console.log("enter loop with call: ", next_call);
 						promise = $.ajax({
 							url: next_call,
 							headers: {
@@ -181,10 +181,10 @@
 							next_call = additional_api_res.artists.next;
 							console.log("page 2's next call: ", next_call);
 						});
-
 						artistsFollowingPromises.push(promise);
-
+						console.log("same?: ", next_call);
 					// };
+
 
 					// run all promises, and when all successful run this function
 					$.when.apply($, artistsFollowingPromises).then(function() {
