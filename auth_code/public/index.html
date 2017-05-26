@@ -170,13 +170,11 @@
 
 					// set up next url, which is 'next' attr of this API response.. will be null if last page
 					url = res.artists.next;
-					console.log("next url: ", url);
 
 					if (url) {
 						artistsFollowingCall(url)
 					} else {
-						console.log("last page.");
-						// resolve(artistsFollowing);
+						console.log("artistsFollowing is an array of all artists a user follows: ", artistsFollowing.length);
 						// send array of artist objects from API call into template
 						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
 					};
