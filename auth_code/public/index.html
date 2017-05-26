@@ -147,22 +147,22 @@
 				let artistsFollowing = [];
 				let url = "https://api.spotify.com/v1/me/following?type=artist&limit=3";
 
-				makeCall(url);
+				artistsFollowingCall(url);
 
-				function makeCall(url) {
+				function artistsFollowingCall(url) {
 					$.ajax({
 						url: url,
 						headers: {
 							"Authorization": "Bearer " + access_token
 						}
 					}).done(function(res) {
-						handleResponse(res);
+						handleArtistsFollowingResponse(res);
 					}).fail(function(err){
 						console.log("error in artists following api call");
 					});
 				};
 
-				function handleResponse(res) {
+				function handleArtistsFollowingResponse(res) {
 					// push first page response into artistsFollowing
 					res.artists.items.forEach(function(artist) {
 						artistsFollowing.push(artist.name);
@@ -173,16 +173,14 @@
 					console.log("next url: ", url);
 
 					if (url) {
-						makeCall(url)
+						artistsFollowingCall(url)
 					} else {
+						console.log("last page.");
 						// resolve(artistsFollowing);
-						console.log("Last page. ArtistsFollowing: ", artistsFollowing);
+						// send array of artist objects from API call into template
+						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
 					};
 				};
-
-				// send array of artist objects from API call into template
-				artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
-
 
 				// saved artists API call
 				let offset = 0;
