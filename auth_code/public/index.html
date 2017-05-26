@@ -165,14 +165,13 @@
 
 					while (next_call) {
 						console.log("next call is not null.. there's another page. next page: ", next_call);
-						console.log("making the call...");
+
 						$.ajax({
 							url: next_call,
 							headers: {
 								"Authorization": "Bearer " + access_token
 							}
 						})
-
 						.done(function(additional_api_res) {
 							console.log("successful call");
 							additional_api_res.artists.items.forEach(function(additional_artist) {
@@ -180,9 +179,14 @@
 							});
 							next_call = additional_api_res.artists.next;
 							console.log("next call: ", next_call);
-						});
+						})
 						
-						next_call = null;
+
+						// AJAX CALL DOES NOT COMPLETE, KEEPS GOING THROUGH LOOP.
+						// HOW TO MAKE SURE .DONE() CALLED BEFORE NEXT LOOP???S
+
+
+						// next_call = null;
 					};
 
 					// send array of artist objects from API call into template
