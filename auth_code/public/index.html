@@ -162,35 +162,39 @@
 
 					next_call = res.artists.next;
 					console.log("page 1's next call: ", next_call);
+					let artistsFollowingPromises = [];
 
 					while (next_call) {
 						console.log("next call is not null.. there's another page. next page: ", next_call);
 
-						$.ajax({
+						promise = $.ajax({
 							url: next_call,
 							headers: {
 								"Authorization": "Bearer " + access_token
-							}
+							},
+							async: false
 						})
 						.done(function(additional_api_res) {
 							console.log("successful call");
 							additional_api_res.artists.items.forEach(function(additional_artist) {
 								artistsFollowing.push(additional_artist.name);
 							});
+
+							// NEED EVERYTHING TO WAIT HERE, SO NEXT_CALL CAN BE SET BASED ON THIS REQUEST
+
 							next_call = additional_api_res.artists.next;
 							console.log("next call: ", next_call);
 						})
-						
 
-						// AJAX CALL DOES NOT COMPLETE, KEEPS GOING THROUGH LOOP.
-						// HOW TO MAKE SURE .DONE() CALLED BEFORE NEXT LOOP???S
-
-
+						artistsFollowingPromises.push(promise);
 						// next_call = null;
 					};
 
-					// send array of artist objects from API call into template
-					artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
+
+					$.when.apply($, artistsFollowingPromises).then(function() {
+						// send array of artist objects from API call into template
+						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
+					});
 
 				})
 				.fail(function(err){
