@@ -154,46 +154,39 @@
 					}
 				})
 				.done(function(res) {
+
 					// push first page response into artistsFollowing
 					res.artists.items.forEach(function(artist) {
 						artistsFollowing.push(artist.name);
 					});
 
-					// collect all additional API page requests 
 					next_call = res.artists.next;
 					console.log("page 1's next call: ", next_call);
-					let artistsFollowingPromises = [];
 
-
-					// while (next_call) {
-						console.log("enter loop with call: ", next_call);
-						promise = $.ajax({
+					while (next_call) {
+						console.log("next call is not null.. there's another page. next page: ", next_call);
+						console.log("making the call...");
+						$.ajax({
 							url: next_call,
 							headers: {
 								"Authorization": "Bearer " + access_token
 							}
 						})
+
 						.done(function(additional_api_res) {
-							console.log("successful");
+							console.log("successful call");
 							additional_api_res.artists.items.forEach(function(additional_artist) {
 								artistsFollowing.push(additional_artist.name);
 							});
 							next_call = additional_api_res.artists.next;
-							console.log("page 2's next call: ", next_call);
+							console.log("next call: ", next_call);
 						});
-						artistsFollowingPromises.push(promise);
-						console.log("same?: ", next_call);
-					// };
-
-
-					// run all promises, and when all successful run this function
-					$.when.apply($, artistsFollowingPromises).then(function() {
-						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
-					});
-
+						
+						next_call = null;
+					};
 
 					// send array of artist objects from API call into template
-					
+					artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
 
 				})
 				.fail(function(err){
