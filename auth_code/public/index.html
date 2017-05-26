@@ -145,9 +145,10 @@
 
 				// artists following API call
 				let artistsFollowing = [];
+				let next_call = "";
 
 				$.ajax({
-					url: "https://api.spotify.com/v1/me/following?type=artist&limit=3&offset=" + offset,
+					url: "https://api.spotify.com/v1/me/following?type=artist&limit=3",
 					headers: {
 						"Authorization": "Bearer " + access_token
 					}
@@ -157,36 +158,36 @@
 					res.artists.items.forEach(function(artist) {
 						artistsFollowing.push(artist.name);
 					});
+
 					// collect all additional API page requests 
+					next_call = res.artists.next;
+					console.log("page 1's next call: ", next_call);
 					let artistsFollowingPromises = [];
 
-					console.log("response total: ", res.artists.total);
 
-					while (offset < res.artists.total) {
-						// THIS IS WHERE IT'S FAILING.  MUST NOT BE ADDING OFFSET CORRECTLY.
-						console.log("offset: ", offset);
-
+					// while (next_call !== null) {
+						console.log("test");
 						promise = $.ajax({
-							url: "https://api.spotify.com/v1/me/following?type=artist&limit=3&offset=" + offset,
+							url: next_call,
 							headers: {
 								"Authorization": "Bearer " + access_token
 							}
 						})
 						.done(function(additional_api_res) {
-							console.log("'Additional_api_response': ", additional_api_res.artists.items[0].name);
+							console.log("successful");
 							additional_api_res.artists.items.forEach(function(additional_artist) {
 								artistsFollowing.push(additional_artist.name);
 							});
+							next_call = additional_api_res.artists.next;
+							console.log("page 2's next call: ", next_call);
 						});
+
 						artistsFollowingPromises.push(promise);
 
-						offset += 3;
-					};
+					// };
 
 					// run all promises, and when all successful run this function
 					$.when.apply($, artistsFollowingPromises).then(function() {
-						console.log("artistsFollowing is an array of artists you follow: ", artistsFollowing.length);
-						console.log("artists following array: ", artistsFollowing);
 						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
 					});
 
