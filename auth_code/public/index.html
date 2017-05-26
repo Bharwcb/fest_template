@@ -145,62 +145,40 @@
 
 				// artists following API call
 				let artistsFollowing = [];
-				let next_call = null;
+				let url = "https://api.spotify.com/v1/me/following?type=artist&limit=3";
 
-				$.ajax({
-					url: "https://api.spotify.com/v1/me/following?type=artist&limit=3",
-					headers: {
-						"Authorization": "Bearer " + access_token
-					}
-				})
-				.done(function(res) {
+				artistsFollowingCall(url);
 
+				function artistsFollowingCall(url) {
+					$.ajax({
+						url: url,
+						headers: {
+							"Authorization": "Bearer " + access_token
+						}
+					}).done(function(res) {
+						handleArtistsFollowingResponse(res);
+					}).fail(function(err){
+						console.log("error in artists following api call");
+					});
+				};
+
+				function handleArtistsFollowingResponse(res) {
 					// push first page response into artistsFollowing
 					res.artists.items.forEach(function(artist) {
 						artistsFollowing.push(artist.name);
 					});
 
-					next_call = res.artists.next;
-					console.log("page 1's next call: ", next_call);
-					let artistsFollowingPromises = [];
+					// set up next url, which is 'next' attr of this API response.. will be null if last page
+					url = res.artists.next;
 
-					while (next_call) {
-						console.log("next call is not null.. there's another page. next page: ", next_call);
-
-						promise = $.ajax({
-							url: next_call,
-							headers: {
-								"Authorization": "Bearer " + access_token
-							},
-							async: false
-						})
-						.done(function(additional_api_res) {
-							console.log("successful call");
-							additional_api_res.artists.items.forEach(function(additional_artist) {
-								artistsFollowing.push(additional_artist.name);
-							});
-
-							// NEED EVERYTHING TO WAIT HERE, SO NEXT_CALL CAN BE SET BASED ON THIS REQUEST
-
-							next_call = additional_api_res.artists.next;
-							console.log("next call: ", next_call);
-						})
-
-						artistsFollowingPromises.push(promise);
-						// next_call = null;
-					};
-
-
-					$.when.apply($, artistsFollowingPromises).then(function() {
+					if (url) {
+						artistsFollowingCall(url)
+					} else {
+						console.log("artistsFollowing is an array of all artists a user follows: ", artistsFollowing.length);
 						// send array of artist objects from API call into template
 						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
-					});
-
-				})
-				.fail(function(err){
-					console.log("error in artists following api call");
-				})
-
+					};
+				};
 
 				// saved artists API call
 				let offset = 0;
