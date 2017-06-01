@@ -210,13 +210,12 @@
 							savedArtists.push(artist.name);
 						})
 					});
-
 					// collect all additional API page requests 
 					let savedArtistsPromises = [];
 
 					while (offset < res.total) {
 						promise = $.ajax({
-							url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
+							url: url,
 							headers: {
 								"Authorization": "Bearer " + access_token
 							}
