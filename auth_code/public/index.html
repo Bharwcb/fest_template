@@ -86,34 +86,34 @@
 	<script>
 		// gets params from url after authorization
 		function getUrlParams() {
-			var urlParams = {};
+			const urlParams = {};
 			var e, r = /([^&;=]+)=?([^&;]*)/g;
-			var q = window.location.hash.substring(1);
+			const q = window.location.hash.substring(1);
 			while ( e = r.exec(q)) {
 				urlParams[e[1]] = decodeURIComponent(e[2]);
 			}
 			return urlParams;
 		}
 
-		var userProfileSource = document.getElementById("user-profile-template").innerHTML,
+		const userProfileSource = document.getElementById("user-profile-template").innerHTML,
 		userProfileTemplate = Handlebars.compile(userProfileSource),
 		userProfilePlaceholder = document.getElementById("user-profile");
 
-		var artistsFollowingSource = document.getElementById("artists-following-template").innerHTML,
+		const artistsFollowingSource = document.getElementById("artists-following-template").innerHTML,
 		artistsFollowingTemplate = Handlebars.compile(artistsFollowingSource),
 		artistsFollowingPlaceholder = document.getElementById("artists-following");
 
-		var savedArtistsSource = document.getElementById("saved-artists-template").innerHTML,
+		const savedArtistsSource = document.getElementById("saved-artists-template").innerHTML,
 		savedArtistsTemplate = Handlebars.compile(savedArtistsSource),
 		savedArtistsPlaceholder = document.getElementById("saved-artists");
 
-		var oauthSource = document.getElementById("oauth-template").innerHTML,
+		const oauthSource = document.getElementById("oauth-template").innerHTML,
 		oauthTemplate = Handlebars.compile(oauthSource),
 		oauthPlaceholder = document.getElementById("oauth");
 
-		var params = getUrlParams();
+		const params = getUrlParams();
 
-		var access_token = params.access_token,
+		let access_token = params.access_token,
 		refresh_token = params.refresh_token,
 		error = params.error;
 
@@ -146,7 +146,6 @@
 				// artists following API call
 				let artistsFollowing = [];
 				let url = "https://api.spotify.com/v1/me/following?type=artist&limit=3";
-
 				artistsFollowingCall(url);
 
 				function artistsFollowingCall(url) {
@@ -244,7 +243,7 @@
 			document.getElementById("obtain-new-token").addEventListener("click", function() {
 				$.ajax({
 					url: "/refresh_token",
-					// send to /refresh_token route with refresh_token variable
+					// send to /refresh_token route with refresh_token constiable
 					data: {
 						"refresh_token": refresh_token
 					}
