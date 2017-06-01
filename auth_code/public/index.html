@@ -147,12 +147,12 @@
 				let artistsFollowing = [];
 				let url = "https://api.spotify.com/v1/me/following?type=artist&limit=3";
 
-				artistsFollowingCall(url)
+				artistsFollowingCallSync(url)
 				.done(function() {
 					// !!!! CALL THIS in a template USING REACT! 
 				});
 
-				function artistsFollowingCall(url) {
+				function artistsFollowingCallSync(url) {
 					return $.ajax({
 						url: url,
 						headers: {
@@ -163,7 +163,7 @@
 						handleArtistsFollowingResponse(res);
 						// if next not null, make api call again with 'next' url
 						if (res.artists.next) {
-							return artistsFollowingCall(res.artists.next);
+							return artistsFollowingCallSync(res.artists.next);
 						};
 						console.log("artistsFollowing is an array of all artists a user follows: ", artistsFollowing.length);
 						// send artistsFollowing array of artist names into template
@@ -181,30 +181,41 @@
 				};
 				// ~~~ end artists following call
 
-				// saved artists API call
+
+				// ~~~ saved artists API call
 				let offset = 0;
 				let savedArtists = [];
-				
-				$.ajax({
-					url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
-					headers: {
-						"Authorization": "Bearer " + access_token
-					}
-				})
-				.done(function(res){
+				url = "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset;
+				savedArtistsCallAsync(url);
+					
+				function savedArtistsCallAsync() {
+					$.ajax({
+						url: url,
+						headers: {
+							"Authorization": "Bearer " + access_token
+						}
+					})
+					.done(function(res){
+						handleSavedArtistsResponse(res);
+					})
+					.fail(function(err){
+						console.log("error in saved artists api call");
+					})
+				}
+
+				function handleSavedArtistsResponse(res) {
 					// push first page response artist names to savedArtists
 					res.items.forEach(function(track){
 						track.track.artists.forEach(function(artist){
 							savedArtists.push(artist.name);
 						})
 					});
-
 					// collect all additional API page requests 
 					let savedArtistsPromises = [];
 
 					while (offset < res.total) {
 						promise = $.ajax({
-							url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
+							url: url,
 							headers: {
 								"Authorization": "Bearer " + access_token
 							}
@@ -226,15 +237,10 @@
 						savedArtists = _.uniq(savedArtists);
 						savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(savedArtists);
 						console.log("savedArtists is an array of unique artist names in your library: ", savedArtists.length);
-
 						// !! EXPORT savedArtists ARRAY HERE 
-
 					});
-				})
-				.fail(function(err){
-					console.log("error in saved artists api call");
-				})
-
+				}
+				// ~~~ end saved artists call
 
 
 			} else {
