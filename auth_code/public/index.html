@@ -147,12 +147,12 @@
 				let artistsFollowing = [];
 				let url = "https://api.spotify.com/v1/me/following?type=artist&limit=3";
 
-				artistsFollowingCall(url)
+				artistsFollowingCallSync(url)
 				.done(function() {
 					// !!!! CALL THIS in a template USING REACT! 
 				});
 
-				function artistsFollowingCall(url) {
+				function artistsFollowingCallSync(url) {
 					return $.ajax({
 						url: url,
 						headers: {
@@ -163,7 +163,7 @@
 						handleArtistsFollowingResponse(res);
 						// if next not null, make api call again with 'next' url
 						if (res.artists.next) {
-							return artistsFollowingCall(res.artists.next);
+							return artistsFollowingCallSync(res.artists.next);
 						};
 						console.log("artistsFollowing is an array of all artists a user follows: ", artistsFollowing.length);
 						// send artistsFollowing array of artist names into template
@@ -186,9 +186,9 @@
 				let offset = 0;
 				let savedArtists = [];
 				url = "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset;
-				savedArtistsCall(url);
+				savedArtistsCallAsync(url);
 					
-				function savedArtistsCall() {
+				function savedArtistsCallAsync() {
 					$.ajax({
 						url: url,
 						headers: {
