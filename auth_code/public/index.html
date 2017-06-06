@@ -86,34 +86,34 @@
 	<script>
 		// gets params from url after authorization
 		function getUrlParams() {
-			var urlParams = {};
+			const urlParams = {};
 			var e, r = /([^&;=]+)=?([^&;]*)/g;
-			var q = window.location.hash.substring(1);
+			const q = window.location.hash.substring(1);
 			while ( e = r.exec(q)) {
 				urlParams[e[1]] = decodeURIComponent(e[2]);
 			}
 			return urlParams;
 		}
 
-		var userProfileSource = document.getElementById("user-profile-template").innerHTML,
+		const userProfileSource = document.getElementById("user-profile-template").innerHTML,
 		userProfileTemplate = Handlebars.compile(userProfileSource),
 		userProfilePlaceholder = document.getElementById("user-profile");
 
-		var artistsFollowingSource = document.getElementById("artists-following-template").innerHTML,
+		const artistsFollowingSource = document.getElementById("artists-following-template").innerHTML,
 		artistsFollowingTemplate = Handlebars.compile(artistsFollowingSource),
 		artistsFollowingPlaceholder = document.getElementById("artists-following");
 
-		var savedArtistsSource = document.getElementById("saved-artists-template").innerHTML,
+		const savedArtistsSource = document.getElementById("saved-artists-template").innerHTML,
 		savedArtistsTemplate = Handlebars.compile(savedArtistsSource),
 		savedArtistsPlaceholder = document.getElementById("saved-artists");
 
-		var oauthSource = document.getElementById("oauth-template").innerHTML,
+		const oauthSource = document.getElementById("oauth-template").innerHTML,
 		oauthTemplate = Handlebars.compile(oauthSource),
 		oauthPlaceholder = document.getElementById("oauth");
 
-		var params = getUrlParams();
+		const params = getUrlParams();
 
-		var access_token = params.access_token,
+		let access_token = params.access_token,
 		refresh_token = params.refresh_token,
 		error = params.error;
 
@@ -143,49 +143,49 @@
 					}
 				});
 
-				// artists following API call
+				// ~~~ artists following API call
 				let artistsFollowing = [];
 				let url = "https://api.spotify.com/v1/me/following?type=artist&limit=3";
 
-				artistsFollowingCall(url);
+				artistsFollowingCallSync(url)
+				.done(function() {
+					// !!!! CALL THIS in a template USING REACT! 
+				});
 
-				function artistsFollowingCall(url) {
-					$.ajax({
+				function artistsFollowingCallSync(url) {
+					return $.ajax({
 						url: url,
 						headers: {
 							"Authorization": "Bearer " + access_token
 						}
-					}).done(function(res) {
+					})
+					.done(function(res) {
 						handleArtistsFollowingResponse(res);
-					}).fail(function(err){
+						// if next not null, make api call again with 'next' url
+						if (res.artists.next) {
+							return artistsFollowingCallSync(res.artists.next);
+						};
+						console.log("artistsFollowing is an array of all artists a user follows: ", artistsFollowing.length);
+						// send artistsFollowing array of artist names into template
+						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
+					})
+					.fail(function(err){
 						console.log("error in artists following api call");
 					});
 				};
 
 				function handleArtistsFollowingResponse(res) {
-					// push first page response into artistsFollowing
 					res.artists.items.forEach(function(artist) {
 						artistsFollowing.push(artist.name);
 					});
-
-					// set up next url, which is 'next' attr of this API response.. will be null if last page
-					url = res.artists.next;
-
-					if (url) {
-						artistsFollowingCall(url)
-					} else {
-						console.log("artistsFollowing is an array of all artists a user follows: ", artistsFollowing.length);
-						// send array of artist objects from API call into template
-						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
-					};
 				};
-				// end artists following
+				// ~~~ end artists following call
 
 
 				// ~~~ saved artists API call
 				let offset = 0;
 				let savedArtists = [];
-				
+
 				$.ajax({
 					url: "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset,
 					headers: {
@@ -220,7 +220,7 @@
 							console.log("savedArtists is an array of unique artist names in your library: ", savedArtists.length);
 
 						// !! EXPORT savedArtists ARRAY HERE 
-	
+
 					});
 				})
 				.fail(function(err){
@@ -245,7 +245,7 @@
 			document.getElementById("obtain-new-token").addEventListener("click", function() {
 				$.ajax({
 					url: "/refresh_token",
-					// send to /refresh_token route with refresh_token variable
+					// send to /refresh_token route with refresh_token constiable
 					data: {
 						"refresh_token": refresh_token
 					}
