@@ -179,8 +179,10 @@
 						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
 					};
 				};
+				// end artists following
 
-				// saved artists API call
+
+				// ~~~ saved artists API call
 				let offset = 0;
 				let savedArtists = [];
 				
@@ -191,14 +193,8 @@
 					}
 				})
 				.done(function(res){
-					// push first page response artist names to savedArtists
-					res.items.forEach(function(track){
-						track.track.artists.forEach(function(artist){
-							savedArtists.push(artist.name);
-						})
-					});
+					buildSavedArtists(res);
 
-					// collect all additional API page requests 
 					let savedArtistsPromises = [];
 
 					while (offset < res.total) {
@@ -209,11 +205,7 @@
 							}
 						})
 						.done(function(additional_api_res) {
-							additional_api_res.items.forEach(function(additional_track){
-								additional_track.track.artists.forEach(function(additional_artist){
-									savedArtists.push(additional_artist.name);
-								})
-							});
+							buildSavedArtists(additional_api_res)
 						});
 						savedArtistsPromises.push(promise);
 						offset += 50;
@@ -232,8 +224,16 @@
 				})
 				.fail(function(err){
 					console.log("error in saved artists api call");
-				})
+				});
 
+				function buildSavedArtists(res) {
+					res.items.forEach(function(track){
+						track.track.artists.forEach(function(artist){
+							savedArtists.push(artist.name);
+						})
+					});
+				}
+				// ~~~ end saved artists
 
 
 			} else {
