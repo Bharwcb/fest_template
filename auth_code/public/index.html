@@ -147,10 +147,7 @@
 				let artistsFollowing = [];
 				let url = "https://api.spotify.com/v1/me/following?type=artist&limit=3";
 
-				artistsFollowingCallSync(url)
-				.done(function() {
-					// !!!! CALL THIS in a template USING REACT! 
-				});
+				artistsFollowingCallSync(url);
 
 				function artistsFollowingCallSync(url) {
 					return $.ajax({
@@ -159,18 +156,15 @@
 							"Authorization": "Bearer " + access_token
 						}
 					})
-					.done(function(res) {
+					.then(function(res) {
 						buildArtistsFollowing(res);
 						// if next not null, make api call again with 'next' url
 						if (res.artists.next) {
 							return artistsFollowingCallSync(res.artists.next);
 						};
-						console.log("artistsFollowing is an array of all artists a user follows: ", artistsFollowing.length);
 						// send artistsFollowing array of artist names into template
 						artistsFollowingPlaceholder.innerHTML = artistsFollowingTemplate(artistsFollowing);
-
-						// !!! RETURN ARTISTSFOLLOWING
-
+						console.log("artistsFollowing is an array of all artists a user follows: ", artistsFollowing.length);
 					})
 					.fail(function(err){
 						console.log("error in artists following api call");
@@ -184,16 +178,12 @@
 				};
 				// ~~~ end artists following call
 
-
 				// ~~~ saved artists API call
 				let offset = 0;
 				let savedArtists = [];
 				url = "https://api.spotify.com/v1/me/tracks?limit=50&offset=" + offset;
 
-				savedArtistsCallAsync(url)
-				.done(function() {
-					// !!!! CALL THIS in a template USING REACT! 
-				});
+				savedArtistsCallAsync(url);
 
 				function savedArtistsCallAsync(url) {
 					return $.ajax({
@@ -228,11 +218,6 @@
 								savedArtists = _.uniq(savedArtists);
 								savedArtistsPlaceholder.innerHTML = savedArtistsTemplate(savedArtists);
 								console.log("savedArtists is an array of unique artist names in your library: ", savedArtists.length);
-
-
-								// !!! RETURN SAVEDARTISTS
-
-
 						});
 					})
 					.fail(function(err){
@@ -249,7 +234,6 @@
 					});
 				};
 				// ~~~ end saved artists
-
 
 			} else {
 				$("#login").show();
