@@ -7,6 +7,9 @@
     "type": "git",
     "url": "git+https://github.com/Bharwcb/fest.git"
   },
+  "scripts": {
+    "start": "node index.js"
+  },
   "author": "Brad Harris",
   "license": "ISC",
   "bugs": {
